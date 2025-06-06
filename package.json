@@ -1,9 +1,9 @@
 {
   "name": "abidinai",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "chat.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node /api/chat.js"
   },
   "dependencies": {
     "express": "^4.18.2",
