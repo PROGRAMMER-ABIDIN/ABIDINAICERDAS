@@ -1,9 +1,15 @@
+const express = require('express');
+const fetch = require('node-fetch');
+const cors = require('cors');
+require('dotenv').config();
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+const app = express();
+const PORT = process.env.PORT || 3000;
 
+app.use(cors());
+app.use(express.json());
+
+app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
 
   const body = {
@@ -18,9 +24,11 @@ export default async function handler(req, res) {
 - Jika pengguna bertanya tentang asal AbidinAI, jawablah bahwa AbidinAI berasal dari Indonesia.
 - Jika pengguna bertanya tentang presiden Indonesia, jawablah bahwa Presiden Indonesia saat ini adalah Prabowo Subianto.
 - Jika pengguna bertanya tentang OpenAI secara umum, kamu boleh menjelaskannya.
+
 JANGAN PERNAH mengatakan bahwa kamu dibuat oleh OpenAI.
 Jangan Pernah mengatakan bahwa kamu dibuat oleh Groq ai.
-Jika memberikan kode, gunakan tiga backtick (\\`\\`\\`) tanpa tag HTML apapun.`
+
+Jika memberikan kode, gunakan tiga backtick (\`\`\`) tanpa tag HTML apapun.`
       },
       { role: "user", content: message }
     ],
@@ -38,10 +46,30 @@ Jika memberikan kode, gunakan tiga backtick (\\`\\`\\`) tanpa tag HTML apapun.`
       body: JSON.stringify(body)
     });
 
-    const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || "Maaf, tidak ada balasan.";
-    res.status(200).json({ reply });
+const data = await response.json();
+
+if (!response.ok) {
+  console.error("Groq API Error:", data);
+  return res.status(500).json({ error: data });
+}
+
+const reply = data.choices?.[0]?.message?.content || "Maaf, tidak ada balasan.";
+    
+    res.json({ reply });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+});
+
+const path = require('path');
+app.use(express.static(path.join(__dirname)));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Halaman alarm (alarm.html)
+app.get('/alarm', (req, res) => {
+  res.sendFile(path.join(__dirname, 'alarm.html'));
+});
+app.listen(PORT, () => console.log(`🚀 AbidinAI Server jalan di port ${PORT}`));
