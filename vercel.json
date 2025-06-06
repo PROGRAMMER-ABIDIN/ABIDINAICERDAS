@@ -13,9 +13,17 @@
       "methods": ["POST"]
     },
     {
+      "src": "/alarm",
+      "dest": "alarm.html"
+    },
+    {
+      "src": "/",
+      "dest": "index.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1",
-      "continue": true
+      "status": 200
     }
   ]
 }
