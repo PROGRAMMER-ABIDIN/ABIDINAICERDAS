@@ -3,26 +3,26 @@
   "builds": [
     {
       "src": "server.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["**/*.html", "**/*.js"]
+      }
     }
   ],
   "routes": [
     {
       "src": "/api/chat",
       "dest": "server.js",
-      "methods": ["POST"]
+      "methods": ["POST"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST"
+      }
     },
     {
-      "src": "/alarm",
-      "dest": "alarm.html"
-    },
-    {
-      "src": "/",
-      "dest": "index.html"
+      "src": "/health",
+      "dest": "server.js",
+      "methods": ["GET"]
     },
     {
       "src": "/(.*)",
