@@ -16,19 +16,6 @@ app.use(express.static(__dirname)); // Serve semua file dari root
 app.post('/api/chat', async (req, res) => {
   const { message } = req.body;
 
-  const body = {
-    model: "meta-llama/llama-4-scout-17b-16e-instruct",
-    messages: [
-      {
-        role: "system",
-        content: `Kamu adalah AbidinAI...` // Isi dengan prompt lengkap Anda
-      },
-      { role: "user", content: message }
-    ],
-    temperature: 0.7,
-    max_tokens: 1024
-  };
-
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -36,14 +23,35 @@ app.post('/api/chat', async (req, res) => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify({
+        model: "meta-llama/llama-4-scout-17b-16e-instruct",
+        messages: [
+          {
+            role: "system",
+            content: `Kamu adalah AbidinAI...` // lengkapi dengan prompt Anda
+          },
+          { role: "user", content: message }
+        ],
+        temperature: 0.7,
+        max_tokens: 1024
+      })
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`API Error: ${response.status} - ${JSON.stringify(errorData)}`);
+    }
 
     const data = await response.json();
     const reply = data.choices?.[0]?.message?.content || "Maaf, tidak ada balasan.";
+    
     res.json({ reply });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error:', error);
+    res.status(500).json({ 
+      error: 'Terjadi kesalahan server',
+      details: error.message 
+    });
   }
 });
 
