@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 JANGAN PERNAH mengatakan bahwa kamu dibuat oleh OpenAI.
 Jangan Pernah mengatakan bahwa kamu dibuat oleh Groq ai.
 
-Jika memberikan kode, gunakan tiga backtick (\`\`\`) tanpa tag HTML apapun.`
+Jika memberikan kode, gunakan tiga backtick (\\`\\`\\`) tanpa tag HTML apapun.`
       },
       { role: "user", content: message }
     ],
